@@ -5,8 +5,12 @@ Trains a ResNet50 regression model on the ChaLearn Looking at People faces
 dataset and prints MAE per epoch. Run this on a GPU machine: 7,591 images
 through ResNet50 for 20 epochs is not a CPU job.
 
-    python run_model_on_gpu.py
+    python train_age_model.py
+
+Set FACES_PATH to point somewhere other than /datasets/faces/.
 """
+
+import os
 
 import pandas as pd
 
@@ -130,10 +134,16 @@ def train_model(model, train_data, test_data, batch_size=None, epochs=20,
 
 if __name__ == '__main__':
 
-    PATH = '/datasets/faces/'
+    PATH = os.environ.get('FACES_PATH', '/datasets/faces/')
 
     train_data = load_train(PATH)
     test_data = load_test(PATH)
 
     model = create_model(input_shape=(224, 224, 3))
+    model.summary()
+
     model = train_model(model, train_data, test_data)
+
+    os.makedirs('models', exist_ok=True)
+    model.save('models/age_resnet50.keras')
+    print('saved models/age_resnet50.keras')

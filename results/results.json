@@ -1,0 +1,21 @@
+{
+  "task": "age regression from face photos",
+  "dataset": "ChaLearn Looking at People, 7591 labelled faces",
+  "split": "75/25 train/validation, seed 12345",
+  "backbone": "ResNet50, ImageNet weights, include_top=False",
+  "head": "GlobalAveragePooling2D -> Dense(1, relu)",
+  "optimizer": "Adam, learning_rate=0.0005",
+  "loss": "mse",
+  "metric": "mae",
+  "epochs": 20,
+  "batch_size": 32,
+  "steps_per_epoch": 356,
+  "seconds_per_epoch": 35,
+  "best_val_mae": 6.6419,
+  "best_val_mae_epoch": 17,
+  "final_val_mae": 7.6512,
+  "final_train_mae": 3.1785,
+  "first_epoch_val_mae": 8.4921,
+  "target_val_mae": 8.0,
+  "target_met": true
+}

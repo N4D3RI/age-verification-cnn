@@ -8,6 +8,23 @@ A ResNet50 regression model that predicts a person's age from a photograph, buil
 
 Good Seed runs checkout cameras that fire when someone buys alcohol. The question put to me was whether a model can read age off that photo well enough to enforce the law. The dataset is 7,591 faces from ChaLearn Looking at People, each labelled with a real age.
 
+## Run it
+
+```bash
+pip install -r requirements.txt
+
+python explore_faces.py     # EDA, writes figures and results/eda_summary.json
+python train_age_model.py   # trains ResNet50, saves models/age_resnet50.keras
+```
+
+Both scripts read the dataset from `/datasets/faces/`. Point `FACES_PATH` somewhere else if your copy lives elsewhere:
+
+```bash
+FACES_PATH=~/data/faces/ python explore_faces.py
+```
+
+`explore_faces.py` runs in under a minute on CPU. **`train_age_model.py` needs a GPU.** 7,591 images through ResNet50 for 20 epochs took about 35 seconds per epoch on GPU and is not worth starting on CPU.
+
 ## Results
 
 | Metric | Value |
@@ -17,6 +34,8 @@ Good Seed runs checkout cameras that fire when someone buys alcohol. The questio
 | Final epoch training MAE | 3.18 years |
 | Epochs | 20 |
 | Backbone | ResNet50, ImageNet weights |
+
+Full epoch by epoch output is in `results/training_log.txt` and the summary in `results/results.json`.
 
 Training MAE falls from 7.43 to 3.18 while validation MAE only improves from 8.49 to the 6.6 to 7.6 range and flattens from about epoch 8. That gap is overfitting: the backbone memorizes the training faces faster than it learns anything that generalizes.
 
@@ -96,16 +115,15 @@ Augmentation is horizontal flip only. A mirrored face is still a plausible photo
 
 The validation generator gets `rescale` and `validation_split` and nothing else, and both flows use the same seed so the 75/25 split does not leak.
 
-## Run it
+## Files
 
-```bash
-pip install -r requirements.txt
-python run_model_on_gpu.py
-```
-
-Expects the dataset at `/datasets/faces/` with a `labels.csv` and a `final_files/` folder. **This needs a GPU.** 7,591 images through ResNet50 for 20 epochs took about 35 seconds per epoch on GPU and is not worth starting on CPU.
-
-`age_verification_cnn.ipynb` holds the exploratory analysis, the same four functions, and the full training log with the conclusions.
+| File | What it does |
+| --- | --- |
+| `explore_faces.py` | EDA: dataset size, age distribution, image property audit, both figures |
+| `train_age_model.py` | Loads the data, builds ResNet50, trains 20 epochs, saves the model |
+| `results/results.json` | Run configuration and headline metrics |
+| `results/training_log.txt` | Full 20 epoch output |
+| `figures/` | Age distribution and the sample face grid |
 
 ## What I would do next
 
